@@ -1,7 +1,7 @@
 import argparse
 
 
-def get_opts():
+def get_opts(prefix_args=None):
     parser = argparse.ArgumentParser()
 
     # dataset parameters
@@ -12,7 +12,7 @@ def get_opts():
     parser.add_argument('--dataset_name',
                         type=str,
                         default='nsvf',
-                        choices=['nerf', 'nsvf', 'colmap'],
+                        choices=['nerf', 'nsvf', 'colmap', 'ngp'],
                         help='which dataset to train/test')
     parser.add_argument('--split',
                         type=str,
@@ -35,6 +35,12 @@ def get_opts():
                         action='store_true',
                         default=False,
                         help='whether to use half2 optimization')
+    
+    parser.add_argument('--encoder_type',
+                        type=str,
+                        default='hash',
+                        choices=['hash', 'triplane'],
+                        help='which encoder to use')
 
     # loss parameters
     parser.add_argument('--distortion_loss_w',
@@ -102,4 +108,4 @@ def get_opts():
     # performance profile
     parser.add_argument('--perf', action='store_true', default=False)
 
-    return parser.parse_args()
+    return parser.parse_args(prefix_args)

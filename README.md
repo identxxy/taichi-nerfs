@@ -1,6 +1,6 @@
 # Taichi NeRFs
 
-A PyTorch + Taichi implementation of [instant-ngp](https://nvlabs.github.io/instant-ngp/assets/mueller2022instant.pdf) NeRF training pipeline.
+A PyTorch + Taichi implementation of [instant-ngp](https://nvlabs.github.io/instant-ngp/assets/mueller2022instant.pdf) NeRF training pipeline. For more details about modeling, please checkout this [article on our blog site](https://docs.taichi-lang.org/blog/taichi-instant-ngp).
 
 <p align="center">
 <img src="assets/office.gif" width="200">
@@ -67,13 +67,16 @@ Using [Taichi AOT](https://docs.taichi-lang.org/docs/tutorial), you can easily d
 <img src="assets/NeRF_iPhone14_Pro_Max.gif" width="200">
 </p>
 
-We're able to acheive real-time interactive on iOS devices.
+We're able to achieve real-time interactive on iOS devices.
 
 | Performance | iPad Pro (M1) | iPhone 14 Pro Max | iPhone 14 |
 | --- | --- | --- | --- |
 | Taichi Instant NGP | 22.4 fps | 18 fps | 13.5 fps |
 
 Stay tuned, more cool demos are on the way! For business inquiries, please reach out us at `contact@taichi.graphics`.
+
+## Text to 3D 
+Taichi-nerf serves as a new backend of the text-to-3D project [stable-dreamfusion](https://github.com/ashawkey/stable-dreamfusion).
 
 ## Frequently asked questions (FAQ)
 

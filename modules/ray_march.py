@@ -7,17 +7,17 @@ from .utils import __morton3D, calc_dt, mip_from_dt, mip_from_pos
 
 
 @ti.kernel
-def raymarching_train(rays_o: ti.types.ndarray(field_dim=2),
-                      rays_d: ti.types.ndarray(field_dim=2),
-                      hits_t: ti.types.ndarray(field_dim=2),
-                      density_bitfield: ti.types.ndarray(field_dim=1),
-                      noise: ti.types.ndarray(field_dim=1),
-                      counter: ti.types.ndarray(field_dim=1),
-                      rays_a: ti.types.ndarray(field_dim=2),
-                      xyzs: ti.types.ndarray(field_dim=2),
-                      dirs: ti.types.ndarray(field_dim=2),
-                      deltas: ti.types.ndarray(field_dim=1),
-                      ts: ti.types.ndarray(field_dim=1), cascades: int,
+def raymarching_train(rays_o: ti.types.ndarray(ndim=2),
+                      rays_d: ti.types.ndarray(ndim=2),
+                      hits_t: ti.types.ndarray(ndim=2),
+                      density_bitfield: ti.types.ndarray(ndim=1),
+                      noise: ti.types.ndarray(ndim=1),
+                      counter: ti.types.ndarray(ndim=1),
+                      rays_a: ti.types.ndarray(ndim=2),
+                      xyzs: ti.types.ndarray(ndim=2),
+                      dirs: ti.types.ndarray(ndim=2),
+                      deltas: ti.types.ndarray(ndim=1),
+                      ts: ti.types.ndarray(ndim=1), cascades: int,
                       grid_size: int, scale: float, exp_step_factor: float,
                       max_samples: float):
 
@@ -124,12 +124,12 @@ def raymarching_train(rays_o: ti.types.ndarray(field_dim=2),
 
 
 @ti.kernel
-def raymarching_train_backword(segments: ti.types.ndarray(field_dim=2),
-                               ts: ti.types.ndarray(field_dim=1),
-                               dL_drays_o: ti.types.ndarray(field_dim=2),
-                               dL_drays_d: ti.types.ndarray(field_dim=2),
-                               dL_dxyzs: ti.types.ndarray(field_dim=2),
-                               dL_ddirs: ti.types.ndarray(field_dim=2)):
+def raymarching_train_backword(segments: ti.types.ndarray(ndim=2),
+                               ts: ti.types.ndarray(ndim=1),
+                               dL_drays_o: ti.types.ndarray(ndim=2),
+                               dL_drays_d: ti.types.ndarray(ndim=2),
+                               dL_dxyzs: ti.types.ndarray(ndim=2),
+                               dL_ddirs: ti.types.ndarray(ndim=2)):
 
     for s in segments:
         index = segments[s]
@@ -145,16 +145,31 @@ class RayMarcher(torch.nn.Module):
     def __init__(self, batch_size=8192):
         super(RayMarcher, self).__init__()
 
-        self.register_buffer('rays_a',
-                             torch.zeros(batch_size, 3, dtype=torch.int32))
         self.register_buffer(
-            'xyzs', torch.zeros(batch_size * 1024, 3, dtype=torch.float32))
+            'rays_a',
+            torch.zeros(batch_size, 3, dtype=torch.int32),
+            persistent=False
+        )
         self.register_buffer(
-            'dirs', torch.zeros(batch_size * 1024, 3, dtype=torch.float32))
+            'xyzs', 
+            torch.zeros(batch_size * 1024, 3, dtype=torch.float32),
+            persistent=False
+        )
         self.register_buffer(
-            'deltas', torch.zeros(batch_size * 1024, dtype=torch.float32))
+            'dirs', 
+            torch.zeros(batch_size * 1024, 3, dtype=torch.float32),
+            persistent=False
+        )
         self.register_buffer(
-            'ts', torch.zeros(batch_size * 1024, dtype=torch.float32))
+            'deltas', 
+            torch.zeros(batch_size * 1024, dtype=torch.float32),
+            persistent=False
+        )
+        self.register_buffer(
+            'ts', 
+            torch.zeros(batch_size * 1024, dtype=torch.float32),
+            persistent=False
+        )
 
         # self.register_buffer('dL_drays_o', torch.zeros(batch_size, dtype=torch.float32))
         # self.register_buffer('dL_drays_d', torch.zeros(batch_size, dtype=torch.float32))
@@ -226,22 +241,22 @@ class RayMarcher(torch.nn.Module):
 
 @ti.kernel
 def raymarching_test_kernel(
-        rays_o: ti.types.ndarray(field_dim=2),
-        rays_d: ti.types.ndarray(field_dim=2),
-        hits_t: ti.types.ndarray(field_dim=2),
-        alive_indices: ti.types.ndarray(field_dim=1),
-        density_bitfield: ti.types.ndarray(field_dim=1),
+        rays_o: ti.types.ndarray(ndim=2),
+        rays_d: ti.types.ndarray(ndim=2),
+        hits_t: ti.types.ndarray(ndim=2),
+        alive_indices: ti.types.ndarray(ndim=1),
+        density_bitfield: ti.types.ndarray(ndim=1),
         cascades: int,
         grid_size: int,
         scale: float,
         exp_step_factor: float,
         N_samples: int,
         max_samples: int,
-        xyzs: ti.types.ndarray(field_dim=2),
-        dirs: ti.types.ndarray(field_dim=2),
-        deltas: ti.types.ndarray(field_dim=1),
-        ts: ti.types.ndarray(field_dim=1),
-        N_eff_samples: ti.types.ndarray(field_dim=1),
+        xyzs: ti.types.ndarray(ndim=2),
+        dirs: ti.types.ndarray(ndim=2),
+        deltas: ti.types.ndarray(ndim=1),
+        ts: ti.types.ndarray(ndim=1),
+        N_eff_samples: ti.types.ndarray(ndim=1),
 ):
 
     for n in alive_indices:
